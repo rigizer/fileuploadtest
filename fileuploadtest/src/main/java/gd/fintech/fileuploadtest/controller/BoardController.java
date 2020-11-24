@@ -81,6 +81,17 @@ public class BoardController {
 		return "boardList";
 	}
 	
+	// 게시물 조회
+	@GetMapping("/boardOne/{boardId}")
+	public String BoardOne(Model model, @PathVariable(value = "boardId") int boardId) {
+		List<Board> board = boardService.getBoardOne(boardId);
+		System.out.println("Debug: " + board);
+		
+		model.addAttribute("board", board);
+		
+		return "boardOne";
+	}
+	
 	// 게시물 입력 Form
 	@GetMapping("/addBoard")
 	public String addBoard() {
@@ -90,9 +101,9 @@ public class BoardController {
 	// 게시물 입력 Action
 	@PostMapping("/addBoard")
 	public String addBoard(BoardForm boardForm) {
-		boardService.addBoard(boardForm);
+		Board board = boardService.addBoard(boardForm);
 		
-		return "redirect:/";
+		return "redirect:/boardOne/" + board.getBoardId();
 	}
 	
 	// 게시물 수정 Form
@@ -112,9 +123,10 @@ public class BoardController {
 		System.out.println("Debug: " + boardForm);
 		boardService.modifyBoard(boardForm);
 		
-		return "redirect:/boardList/1";
+		return "redirect:/boardOne/" + boardForm.getBoardId();
 	}
 	
+	// 게시물 개별 첨부파일 삭제
 	@GetMapping("/removeFile/{boardId}/{boardfileId}/{boardfileName}")
 	public String removeFile(Model model, 
 			@PathVariable(value = "boardId") int boardId, 

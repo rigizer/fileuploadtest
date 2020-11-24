@@ -10,12 +10,12 @@
 	</select>
 
 	<insert id="insertBoardfile" parameterType="gd.fintech.fileuploadtest.vo.Boardfile">
-		INSERT INTO boardfile(
+		INSERT INTO boardfile (
 			board_id, 
 			boardfile_name, 
 			boardfile_type, 
 			boardfile_size		
-		) VALUES(
+		) VALUES (
 			#{boardId}, 
 			#{boardfileName},
 			#{boardfileType},

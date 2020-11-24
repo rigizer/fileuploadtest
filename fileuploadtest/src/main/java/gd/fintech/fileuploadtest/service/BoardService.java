@@ -24,7 +24,7 @@ import gd.fintech.fileuploadtest.mapper.BoardfileMapper;
 @Transactional
 public class BoardService {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
-	private final String PATH = "C:\\Users\\Jaeyong\\Downloads\\sts-4.8.1.RELEASE\\stswork\\fileuploadtest\\src\\main\\webapp\\upload\\";
+	private final String PATH = "C:\\Users\\Jaeyong\\git\\repository2\\fileuploadtest\\src\\main\\webapp\\upload\\";
 	
 	@Autowired BoardMapper boardMapper;
 	@Autowired BoardfileMapper boardfileMapper;
@@ -55,7 +55,7 @@ public class BoardService {
 		return boardOne;
 	}
 	
-	public void addBoard(BoardForm boardForm) {
+	public Board addBoard(BoardForm boardForm) {
 		// 1. board DB 입력 -> Key 값을 받는다
 		Board board = new Board();
 		board.setBoardTitle(boardForm.getBoardTitle());
@@ -106,6 +106,8 @@ public class BoardService {
 			// 3. boardfile.size()의 횟수만큼 입력.
 			// 4. 입력시마다 boardId는 1번에서 받은 Key 값 이용
 		}
+		
+		return board;
 	}
 	
 	public void modifyBoard(BoardForm boardForm) {

@@ -4,7 +4,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>modifyBoard</title>
+		<title>boardOne</title>
 		
 		<!-- Bootstrap Framework 사용 -->
 		
@@ -77,44 +77,6 @@
 			a:active {color: black;}
 			a:hover {color: black;}
 		</style>
-		
-		<script>
-			$(document).ready(function() {
-				// 파일 추가 버튼을 누를 때
-				$('#addBtn').click(function() {
-					html = '<div><input type="file" class="form-control boardfile" name="boardfile"></div>';
-					$('#fileinput').append(html);
-				});
-
-				// 파일 삭제 버튼을 누르면 마지막에 append된 첨부파일이 삭제
-				$('#delBtn').click(function() {
-					$('#fileinput').children().last().remove();
-				});
-
-				// 입력 버튼을 누를 때
-				$('#submitBtn').click(function() {
-					// 비어있는 파일이 있는지 체크 (없으면 true, 하나라도 있으면 false)
-					let ck = true;
-					
-					// 반복문을 돌리면서 각 첨부파일을 확인
-					$('.boardfile').each(function(index, item) {
-						console.log($(item).val());
-						
-						// 비어있는 파일이 하나라도 있는 경우
-						if($(item).val() == '') {
-							ck = false;
-						}
-					});
-
-					// ck가 true일 때만 폼 입력 가능
-					if (ck == true) {
-						$('#fileuploadForm').submit();
-					} else {	// 아닌 경우 경고창 띄우기
-						alert('선택하지 않은 파일이 있습니다.\n다시 한 번 확인해주세요.');
-					}
-				});
-			});
-		</script>
 	</head>
 	<body>
 		<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
@@ -135,60 +97,97 @@
 			
 			<br>
 		
-			<h1>게시물 수정</h1>
+			<h1>게시물 조회</h1>
+			
+			<br>
+
+			<div class="btn-group" style="float: right;">
+				<button type="button" class="btn btn-sm btn-primary" onclick="location.href='${pageContext.request.contextPath}/modifyBoard/${board[0].boardId}'">수정</button>
+				<button type="button" class="btn btn-sm btn-danger" onclick="location.href='${pageContext.request.contextPath}/removeBoard/${board[0].boardId}'">삭제</button>
+			</div>
+		
+			<br><br>
+		
+			<table class="table table-hover center tb-fixed">
+				<tr>
+					<td width="20%">번호</td>
+					<td width="80%">
+						${board[0].boardId}
+					</td>
+				</tr>
+				<tr>
+					<td>제목</td>
+					<td>
+						${board[0].boardTitle}
+					</td>
+				</tr>
+				<tr>
+					<td>내용</td>
+					<td>
+						${board[0].boardContent}
+					</td>
+				</tr>
+				<tr>
+					<td>첨부파일</td>
+					<td>
+						<c:if test="${null ne board[0].boardfile[0]}">
+							<c:forEach var="bf" items="${board[0].boardfile}">
+								<div>
+									<a href="${pageContext.request.contextPath}/upload/${bf.boardfileName}">
+										${bf.boardfileName}
+									</a>
+								</div>
+							</c:forEach>
+					    </c:if>
+					    <c:if test="${null eq board[0].boardfile[0].boardfileName}">
+							(첨부파일이 없습니다)
+					    </c:if>
+					</td>
+				</tr>
+			</table>
 			
 			<br>
 			
-			<form id="fileuploadForm" method="post" enctype="multipart/form-data" action="${pageContext.request.contextPath}/modifyBoard">
-			
-				<button type="button" class="btn btn-sm btn-dark" style="float: right;" id="submitBtn">게시물 수정</button>
-			
-				<br><br>
-			
-				<table class="table center tb-fixed">
+			<table class="table center tb-fixed">
+				<thead>
+					<th width="20%"></th>
+					<th width="60%">댓글</th>
+					<th width="20%"></th>
+				</thead>
+				<tbody>
+					<c:forEach var="c" items="${board[0].commentList}">
+						<c:if test="${!empty c.commentContent}">
+							<tr>
+								<td>${c.commentId}</td>
+								<td>${c.commentContent}</td>
+								<td>
+									<button type="button" class="btn btn-sm btn-danger" onclick="location.href='${pageContext.request.contextPath}/removeComment/${c.commentId}/${c.boardId}'">삭제</button>
+								</td>
+							</tr>
+						</c:if>
+						
+						<c:if test="${empty c.commentContent}">
+							<tr>
+								<td colspan="3">(댓글이 없습니다)</td>
+							</tr>
+						</c:if>
+					</c:forEach>
+					
 					<tr>
-						<td width="20%">번호</td>
-						<td width="80%">
-							<input type="text" class="form-control" name="boardId" value="${board[0].boardId}" readonly="readonly">
-						</td>
-					</tr>
-					<tr>
-						<td>제목</td>
-						<td>
-							<input type="text" class="form-control" name="boardTitle" value="${board[0].boardTitle}">
-						</td>
-					</tr>
-					<tr>
-						<td>내용</td>
-						<td>
-							<textarea name="boardContent" class="form-control" rows="10" cols="50">${board[0].boardContent}</textarea>
-						</td>
-					</tr>
-					<tr>
-						<td>기존 첨부파일</td>
-						<td>
-							<c:forEach var="bf" items="${board[0].boardfile}">
+						<td colspan="3">
+							<form action="${pageContext.request.contextPath}/addComment" method="post">
+								<input type="hidden" name="boardId" value="${board[0].boardId}">
 								<div class="input-group mb-3">
-									<input type="text" class="form-control" value="${bf.boardfileName}">
+									<input type="text" class="form-control" name="commentContent"></input>
 									<div class="input-group-append">
-										<button type="button" class="btn btn-sm btn-danger" onClick="location.href='${pageContext.request.contextPath}/removeFile/${bf.boardId}/${bf.boardfileId}/${bf.boardfileName}'">파일 삭제</button>
+										<button type="submit" class="btn btn-sm btn-dark">댓글 입력</button>
 									</div>
 								</div>
-							</c:forEach>
+							</form>
 						</td>
 					</tr>
-					<tr>
-						<td>신규 첨부파일</td>
-						<td>
-							<div>
-								<button type="button" class="btn btn-sm btn-dark" id="addBtn">파일 추가</button>
-								<button type="button" class="btn btn-sm btn-dark" id="delBtn">파일 삭제</button>
-							</div>
-							<div id="fileinput"></div>
-						</td>
-					</tr>
-				</table>
-			</form>
+				</tbody>
+			</table>
 		</div>
 	</body>
 </html>

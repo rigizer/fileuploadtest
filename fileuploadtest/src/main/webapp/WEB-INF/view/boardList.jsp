@@ -108,29 +108,15 @@
 			<table class="table table-hover center tb-fixed">
 				<thead>
 					<tr>
-						<th width="10%">번호</th>
-						<th width="30%">제목</th>
-						<th width="40%">파일</th>
-						<th>수정</th>
-						<th>삭제</th>
+						<th width="20%">번호</th>
+						<th width="80%">제목</th>
 					</tr>
 				</thead>
 				<tbody>
 					<c:forEach var="b" items="${boardList}">
 						<tr>
 							<td>${b.boardId}</td>
-							<td>${b.boardTitle}</td>
-							<td>
-								<c:forEach var="bf" items="${b.boardfile}">
-									<div>
-										<a href="${pageContext.request.contextPath}/upload/${bf.boardfileName}">
-											${bf.boardfileName}
-										</a>
-									</div>
-								</c:forEach>
-							</td>
-							<td><button type="button" class="btn btn-sm btn-primary" onclick="location.href='${pageContext.request.contextPath}/modifyBoard/${b.boardId}'">수정</button></td>
-							<td><button type="button" class="btn btn-sm btn-danger" onclick="location.href='${pageContext.request.contextPath}/removeBoard/${b.boardId}'">삭제</button></td>
+							<td><a href="${pageContext.request.contextPath}/boardOne/${b.boardId}">${b.boardTitle}</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>
